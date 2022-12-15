@@ -17,15 +17,32 @@ def get_students(students):
     return sorted_students
 
 
-def get_group_average_mark_in_subject():
-    pass
+def get_group_average_mark_in_subject(students):
+    group_marks = {}
+
+    for _ in students:
+        group = _[5]
+        marks = _[6:]
+        if group in group_marks.keys():
+            marks_sum = list(map(lambda x, y: x + y, marks, group_marks[group][0]))
+            students_number = group_marks[group][1]
+            group_marks[group] = [marks_sum, students_number + 1]
+        else:
+            group_marks[group] = [marks, 1]
+
+    # print('group_marks: ', group_marks)
+
+    for i, j in group_marks.items():
+        j = list(map(lambda x, y=j[1]: x / y, j[0]))
+        group_marks[i] = j
+
+    return group_marks
 
 
 def get_youngest_and_oldest_students(students):
     max_birth_year = min_birth_year = students[0][3]
     youngest_student = ()
     oldest_student = ()
-    result = []
 
     for _ in students:
         if _[3] > min_birth_year:
@@ -35,9 +52,7 @@ def get_youngest_and_oldest_students(students):
             oldest_student = _
             max_birth_year = _[3]
 
-    result.append(youngest_student)
-    result.append(oldest_student)
-    return result
+    return youngest_student, oldest_student
 
 
 def get_best_student_of_group(students):
@@ -59,8 +74,8 @@ if __name__ == '__main__':
 
     students = [
         ('Иванов', 'Сергей', 'Дмитриевич', 2003, 2, '431-1', 4, 5, 4, 4, 4),
-        ('Петров', 'Кирилл', 'Олегович', 2002, 3, '430-2', 4, 5, 3, 4, 3),
-        ('Сергеева', 'Елизавета', 'Викторовна', 2005, 3, '430-2', 5, 5, 5, 4, 5),
+        ('Петров', 'Кирилл', 'Олегович', 2001, 3, '430-2', 4, 5, 3, 4, 3),
+        ('Сергеева', 'Елизавета', 'Викторовна', 2002, 3, '430-2', 5, 5, 5, 4, 5),
         ('Кузнецов', 'Валерий', 'Андреевич', 2002, 3, '430-1', 5, 5, 5, 5, 5),
         ('Соколова', 'Виктория', 'Сергеевна', 2003, 2, '431-1', 4, 5, 5, 4, 5),
         ('Попов', 'Виктор', 'Александрович', 2004, 1, '432-1', 3, 4, 3, 4, 5),
@@ -78,16 +93,24 @@ if __name__ == '__main__':
             for _ in course_students:
                 print(_)
             break
+
         if answer == 2:
+            avg_marks = get_group_average_mark_in_subject(students)
+            print('Average marks of group in subject:')
+            for group, marks in avg_marks.items():
+                print(f'Group: {group} marks: {marks}')
             break
+
         if answer == 3:
             youngest_and_oldest = get_youngest_and_oldest_students(students)
             print('Youngest and oldest student: ')
             for _ in youngest_and_oldest:
                 print(_)
             break
+
         if answer == 4:
             best_students = get_best_student_of_group(students)
+            print('Best students of groups:')
             for group, student in best_students.items():
-                print(group, student)
+                print(f'Group: {group} student: {student}')
             break
